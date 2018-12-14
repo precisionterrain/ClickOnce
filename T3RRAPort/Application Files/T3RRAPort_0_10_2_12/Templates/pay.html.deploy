@@ -1,0 +1,38 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<script src="https://js.braintreegateway.com/web/dropin/1.14.1/js/dropin.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+</head>
+<body>
+	<div id="loading">loading..</div>
+	<div id="done" style="display: none;">
+		<div id="dropin-container"></div>
+		<button id="submit-button">Pay</button>
+	</div>
+	<script>
+		var button = document.querySelector("#submit-button");
+
+		braintree.dropin.create({
+			authorization: "{Token}",
+			vaultManager: true,
+			container: "#dropin-container"
+		}, function (createErr, instance) {
+			button.addEventListener("click", function () {
+				instance.requestPaymentMethod(function (requestPaymentMethodErr, payload) {
+					window.external.ReceiveString(payload.nonce);
+				});
+			});
+		});
+
+
+		if (window.external !== null) {
+			// only show if all good
+			$('#loading').fadeOut('slow', function () {
+				$('#done').fadeIn();
+			});
+		}
+	</script>
+</body>
+</html>
